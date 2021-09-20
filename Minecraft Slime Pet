@@ -190,11 +190,14 @@ if(chatClk()){
             hideChat(1)
             hint("Pet is now following nearest player!",3500)
             Nearest=1
+            CustomTarget=0
         }
         if(owner():lastSaid()=="/me"){
             hideChat(1)
             hint("Pet is now following You!",3500)
             Nearest=0
+            CustomTarget=0
+            TargetEnt=owner()
         }
         if(owner():lastSaid()=="/commands"){
             hideChat(1)
