@@ -247,6 +247,7 @@ if(clk("help")){
     print("/nearest --- Set Owner/Target to be nearest player it finds")
     print("/me --- Set Owner/Target to be the owner of the E2/You")
     print("/target NAME --- Set Owner/Target to be the person who's name you say")
+    print("/teleport --- Toggle Teleport option, should pet teleport to the target if too far from it")
     print("/commands --- Print these commands")
 }
 if(changed(TargetEnt)&TargetEnt){
