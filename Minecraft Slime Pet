@@ -227,7 +227,7 @@ if(Ent:pos():distance(TargetEnt:pos())<90){
 }else{
     if(Stop==0){
         if(Ent:pos():distance(TargetEnt:pos())>2000){
-            Ent:setPos(owner():pos()+vec(0,0,4))
+            Ent:setPos(TargetEnt:pos()+vec(0,0,4))
         }
     }
     Stop=StopOverwrite
