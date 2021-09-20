@@ -1,7 +1,7 @@
-@name Minecraft Slime Pet
+@name Slime Pet
 @model models/sprops/cuboids/height12/size_1/cube_12x12x12.mdl
 @persist TorqueStabilization Ent:entity Ang:angle Yaw2 TorqueMult
-@persist Inertia:angle ScaleOffset Random TargetEnt:entity
+@persist Inertia:angle ScaleOffset Random TargetEnt:entity NewTarget:entity FindName:string CustomTarget
 @persist [Jumping JumpTime] [JumpTarget JumpOrigin]:vector JumpApex Stop StopOverwrite Nearest
 @trigger none
 runOnChat(1)
@@ -81,7 +81,11 @@ local SinT = sin(Time) / Moving
 
 if(clk("jump")){
     if(Nearest==0){
-        TargetEnt=owner()
+        if(CustomTarget==0){
+            TargetEnt=owner()
+        }else{
+            TargetEnt=NewTarget
+        }
     }else{
         findByClass("player")
         findSortByDistance(entity():pos())
@@ -164,22 +168,24 @@ holoScale(2, vec(1,1,ScaleOffset)*0.75)
     ScaleOffset=1
 }
 if(chatClk()){
-    if(lastSpoke()==owner()){
-        if(owner():lastSaid()=="/follow"){
+    if(lastSpoke()==TargetEnt){
+        if(TargetEnt:lastSaid()=="/follow"){
             hideChat(1)
             hint("Pet is now following!",3500)
             StopOverwrite=0
         }
-        if(owner():lastSaid()=="/stay"){
+        if(TargetEnt:lastSaid()=="/stay"){
             hideChat(1)
             hint("Pet is no longer following!",3500)
             StopOverwrite=1
         }
-        if(owner():lastSaid()=="/rand"){
+        if(TargetEnt:lastSaid()=="/rand"){
             hideChat(1)
             hint("Random time jump toggled!",3500)
             Random=!Random
         }
+    }
+    if(lastSpoke()==owner()){
         if(owner():lastSaid()=="/nearest"){
             hideChat(1)
             hint("Pet is now following nearest player!",3500)
@@ -195,12 +201,33 @@ if(chatClk()){
             hint("Commands printed in chat!",3500)
             timer("help",100)
         }
+        if(owner():lastSaid():explode(" ")[1,string]=="/target"){
+            hideChat(1)
+            if(owner():lastSaid():explode(" ")[2,string]){
+            FindName=owner():lastSaid():explode(" ")[2,string]
+            findIncludeClass("player")
+            NewTarget=findPlayerByName(FindName)
+            TargetEnt=NewTarget
+            if(NewTarget:isPlayer()){
+                hint("Target set to "+NewTarget:name()+"!",3500)
+                CustomTarget=1
+            }else{
+                hint("Target not found, resetting to owner!",3500)
+                CustomTarget=0
+                TargetEnt=owner()
+            }
+            Nearest=0
+            }
+        }
     }
 }
 
 if(Ent:pos():distance(TargetEnt:pos())<90){
     Stop=1
 }else{
+    if(Ent:pos():distance(TargetEnt:pos())>2000){
+        Ent:setPos(owner():pos()+vec(0,0,4))
+    }
     Stop=StopOverwrite
 }
 if(clk("help")){
@@ -210,5 +237,10 @@ if(clk("help")){
     print("/rand --- Make jumping randomized")
     print("/nearest --- Set Owner/Target to be nearest player it finds")
     print("/me --- Set Owner/Target to be the owner of the E2/You")
+    print("/target NAME --- Set Owner/Target to be the person who's name you say")
     print("/commands --- Print these commands")
 }
+if(changed(TargetEnt)&TargetEnt){
+    hint("Target: "+TargetEnt:name(),2000)
+}
+
