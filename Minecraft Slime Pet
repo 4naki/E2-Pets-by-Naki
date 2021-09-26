@@ -1,7 +1,7 @@
 @name Slime Pet
 @model models/sprops/cuboids/height12/size_1/cube_12x12x12.mdl
 @persist TorqueStabilization Ent:entity Ang:angle Yaw2 TorqueMult
-@persist Inertia:angle ScaleOffset Random TargetEnt:entity NewTarget:entity FindName:string CustomTarget
+@persist Inertia:angle ScaleOffset Random TargetEnt:entity NewTarget:entity FindName:string CustomTarget Hat
 @persist [Jumping JumpTime] [JumpTarget JumpOrigin]:vector JumpApex Stop StopOverwrite Nearest Teleport
 @trigger none
 runOnChat(1)
@@ -232,6 +232,11 @@ if(chatClk()){
             hint("Teleporting toggled!",3500)
             Teleport=!Teleport
         }
+        if(owner():lastSaid()=="/togglehat"){
+            hideChat(1)
+            hint("Hat Toggled!",3500)
+            Hat=!Hat
+        }
         if(owner():lastSaid():explode(" ")[1,string]=="/target"){
             hideChat(1)
             if(owner():lastSaid():explode(" ")[2,string]){
@@ -274,9 +279,15 @@ if(clk("help")){
     print("/me --- Set Owner/Target to be the owner of the E2/You")
     print("/target NAME --- Set Owner/Target to be the person who's name you say")
     print("/toggletp --- Toggle Teleport option, should pet teleport to the target if too far from it")
+    print("/togglehat --- Should hat be visible")
     print("/commands --- Print these commands")
 }
 if(changed(TargetEnt)&TargetEnt){
     hint("Target: "+TargetEnt:name(),2000)
 }
 
+if(Hat){
+    holoAlpha(7,255)
+}else{
+    holoAlpha(7,0)
+}
