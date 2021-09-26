@@ -1,6 +1,6 @@
 @name Slime Pet
 @model models/sprops/cuboids/height12/size_1/cube_12x12x12.mdl
-@persist TorqueStabilization Ent:entity Ang:angle Yaw2 TorqueMult
+@persist TorqueStabilization Ent:entity Ang:angle Yaw2 TorqueMult Name:string
 @persist Inertia:angle ScaleOffset Random TargetEnt:entity NewTarget:entity FindName:string CustomTarget Hat
 @persist [Jumping JumpTime] [JumpTarget JumpOrigin]:vector JumpApex Stop StopOverwrite Nearest Teleport
 @trigger none
@@ -16,6 +16,8 @@ if(first()){
     Ang = ang(0)
     ScaleOffset=1
     Inertia = shiftL(ang(Ent:inertia()))
+    
+    Name="Pet"
     
     entity():setAlpha(0)
     
@@ -73,9 +75,17 @@ if(first()){
     #hatModel
     holoCreate(7)
     holoParent(7, holoEntity(6))
-    holoPos(7, holoEntity(1):toWorld(vec(-1.5,-1.5,0)))
-    holoAng(7, holoEntity(1):toWorld(ang(-1,60,-4)))
-    holoModel(7, "models/player/items/humans/top_hat.mdl")
+    holoPos(7, holoEntity(1):toWorld(vec(0,0,-8.5)))
+    holoAng(7, holoEntity(1):toWorld(ang(0,0,0)))
+    holoModel(7, "models/food/burger.mdl")
+    holoAlpha(7, 255)
+    holoScale(7, vec(1,1,1))
+    
+    holoCreate(7)
+    holoParent(7, holoEntity(6))
+    holoPos(7, holoEntity(1):toWorld(vec(0,0,-8.5)))
+    holoAng(7, holoEntity(1):toWorld(ang(0,0,0)))
+    holoModel(7, "models/food/burger.mdl")
     holoAlpha(7, 255)
     holoScale(7, vec(1,1,1))
     
@@ -194,12 +204,12 @@ if(chatClk()){
     if(lastSpoke()==TargetEnt){
         if(TargetEnt:lastSaid()=="/follow"){
             hideChat(1)
-            hint("Pet is now following!",3500)
+            hint(Name+" is now following!",3500)
             StopOverwrite=0
         }
         if(TargetEnt:lastSaid()=="/stay"){
             hideChat(1)
-            hint("Pet is no longer following!",3500)
+            hint(Name+" is no longer following!",3500)
             StopOverwrite=1
         }
         if(TargetEnt:lastSaid()=="/rand"){
@@ -211,13 +221,13 @@ if(chatClk()){
     if(lastSpoke()==owner()){
         if(owner():lastSaid()=="/nearest"){
             hideChat(1)
-            hint("Pet is now following nearest player!",3500)
+            hint(Name+" is now following nearest player!",3500)
             Nearest=1
             CustomTarget=0
         }
         if(owner():lastSaid()=="/me"){
             hideChat(1)
-            hint("Pet is now following You!",3500)
+            hint(Name+" is now following You!",3500)
             Nearest=0
             CustomTarget=0
             TargetEnt=owner()
@@ -236,6 +246,13 @@ if(chatClk()){
             hideChat(1)
             hint("Hat Toggled!",3500)
             Hat=!Hat
+        }
+        if(owner():lastSaid():explode(" ")[1,string]=="/name"){
+            hideChat(1)
+            if(owner():lastSaid():explode(" ")[2,string]){
+            Name=owner():lastSaid():explode(" ")[2,string]
+            hint("Name set to "+Name+".",3500)
+            }
         }
         if(owner():lastSaid():explode(" ")[1,string]=="/target"){
             hideChat(1)
@@ -280,13 +297,14 @@ if(clk("help")){
     print("/target NAME --- Set Owner/Target to be the person who's name you say")
     print("/toggletp --- Toggle Teleport option, should pet teleport to the target if too far from it")
     print("/togglehat --- Should hat be visible")
+    print("/name TEXT --- Set pet's name to TEXT")
     print("/commands --- Print these commands")
 }
 if(changed(TargetEnt)&TargetEnt){
     hint("Target: "+TargetEnt:name(),2000)
 }
 
-if(Hat){
+if(!Hat){
     holoAlpha(7,255)
 }else{
     holoAlpha(7,0)
