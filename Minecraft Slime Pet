@@ -67,8 +67,8 @@ if(first()){
     
     entity():propFreeze(0)
     
-    hint("Commands printed in chat!",3500)
-    timer("help",100)
+    #hint("Commands printed in chat!",3500)
+    #timer("help",100)
 }
 
 local Ranger = rangerOffset(100, Ent:pos(), vec(0, 0, -1))
