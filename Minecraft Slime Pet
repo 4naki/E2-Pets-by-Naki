@@ -77,7 +77,7 @@ if(first()){
     holoAng(7, holoEntity(1):toWorld(ang(-1,60,-4)))
     holoModel(7, "models/player/items/humans/top_hat.mdl")
     holoAlpha(7, 255)
-    
+    holoScale(7, vec(1,1,1))
     
     Stop=0
     StopOverwrite=0
